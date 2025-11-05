@@ -1,0 +1,25 @@
+<hgroup>
+    <h1>Your Dashboard</h1>
+    <p>Overview of your latest challenges, statistics, and more.</p>
+</hgroup>
+
+<article>
+    <input type="text" placeholder="pouchdb test" id="pouchdbtest">
+    <button id="pouchdbdelete">delete</button>
+    <button id="pouchdbcreate">create</button>
+</article>
+
+<div rs-for="item in publicChallenges">
+    <article>{index} {item.title} <button onclick="deleteChallenge({index})">delete</button></article>
+</div>
+
+<article>
+    <h3>What's the goal?</h3>
+    <p>I am obsessed by the KISS principle and always try to keep it simple.</p>
+    <p>So I created this app, to show how simple it can be.</p>
+    <p>If you want to know more about the WHY, read on at <a href="#" onclick="showPage(4)">here</a>.</p>
+</article>
+
+<article>
+    <button class="outline" onclick="$id('settings').open()">Settings</button>
+</article>

@@ -1,0 +1,199 @@
+<html lang="de" data-theme="dark" data-color="cyan">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="color-scheme" content="light dark" />
+        <meta name="theme-color" content="#000000" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <title>Challenging - Get it done</title>
+
+        <link
+            rel="shortcut icon"
+            href="assets/icons/favicon.ico"
+            type="image/x-icon"
+        />
+        <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png" />
+        <link
+            rel="apple-touch-icon"
+            sizes="57x57"
+            href="assets/icons/apple-touch-icon-57x57.png"
+        />
+        <link
+            rel="apple-touch-icon"
+            sizes="72x72"
+            href="assets/icons/apple-touch-icon-72x72.png"
+        />
+        <link
+            rel="apple-touch-icon"
+            sizes="76x76"
+            href="assets/icons/apple-touch-icon-76x76.png"
+        />
+        <link
+            rel="apple-touch-icon"
+            sizes="114x114"
+            href="assets/icons/apple-touch-icon-114x114.png"
+        />
+        <link
+            rel="apple-touch-icon"
+            sizes="120x120"
+            href="assets/icons/apple-touch-icon-120x120.png"
+        />
+        <link
+            rel="apple-touch-icon"
+            sizes="144x144"
+            href="assets/icons/apple-touch-icon-144x144.png"
+        />
+        <link
+            rel="apple-touch-icon"
+            sizes="152x152"
+            href="assets/icons/apple-touch-icon-152x152.png"
+        />
+        <link
+            rel="apple-touch-icon"
+            sizes="180x180"
+            href="assets/icons/apple-touch-icon-180x180.png"
+        />
+        <link rel="manifest" href="manifest.json" />
+
+        <link rel="stylesheet" href="style.css" />
+        <link
+            rel="stylesheet"
+            id="theme-stylesheet"
+            href="assets/pico.conditional.cyan.min.css"
+        />
+        <link rel="stylesheet" href="theme.css" />
+
+        <script src="lib/utils.js"></script>
+        <script src="lib/reactiveHtml.js"></script>
+        <script src="//cdn.jsdelivr.net/npm/pouchdb@9.0.0/dist/pouchdb.min.js"></script>
+    </head>
+    <body>
+        <main class="pico" data-color="{theme}">
+            <div rs-if="activePage === 1" class="page" id="page1"></div>
+            <div rs-if="activePage === 2" class="page" id="page2"></div>
+            <div rs-if="activePage === 3" class="page" id="page3"></div>
+        </main>
+
+        <footer class="pico" data-color="{theme}">
+            <div role="group">
+                <button
+                    class="outline active-{activePage}"
+                    ontouchstart="showPage(1)"
+                    onclick="showPage(1)"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-layout-dashboard-icon lucide-layout-dashboard"
+                    >
+                        <rect width="7" height="9" x="3" y="3" rx="1" />
+                        <rect width="7" height="5" x="14" y="3" rx="1" />
+                        <rect width="7" height="9" x="14" y="12" rx="1" />
+                        <rect width="7" height="5" x="3" y="16" rx="1" />
+                    </svg>
+                </button>
+                <button
+                    class="outline active-{activePage}"
+                    ontouchstart="showPage(2)"
+                    onclick="showPage(2)"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-circle-fading-plus-icon lucide-circle-fading-plus"
+                    >
+                        <path d="M12 2a10 10 0 0 1 7.38 16.75" />
+                        <path d="M12 8v8" />
+                        <path d="M16 12H8" />
+                        <path d="M2.5 8.875a10 10 0 0 0-.5 3" />
+                        <path d="M2.83 16a10 10 0 0 0 2.43 3.4" />
+                        <path d="M4.636 5.235a10 10 0 0 1 .891-.857" />
+                        <path d="M8.644 21.42a10 10 0 0 0 7.631-.38" />
+                    </svg>
+                </button>
+                <button
+                    class="outline active-{activePage}"
+                    ontouchstart="showPage(3)"
+                    onclick="showPage(3)"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="lucide lucide-lightbulb-icon lucide-lightbulb"
+                    >
+                        <path
+                            d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"
+                        />
+                        <path d="M9 18h6" />
+                        <path d="M10 22h4" />
+                    </svg>
+                </button>
+            </div>
+        </footer>
+
+        <!-- Components -->
+        <app-drawer id="settings" class="pico">
+            <h2>Settings</h2>
+
+            <article>
+                <button id="dark-light-toggle" onclick="darkLightToggle()">
+                    dark/light
+                </button>
+            </article>
+
+            <button class="secondary" close-drawer>Done</button>
+        </app-drawer>
+
+        <app-modal id="myModal" class="pico">
+            <h3>Some title</h3>
+            <p>Some text</p>
+        </app-modal>
+
+        <!-- Scripts -->
+        <script>
+            const { store, rs } = new ReactiveStore({
+                pageTitle: ["Startpage", "Showcase", "Settings", "The Why"],
+                activePage: 1,
+                todos: [
+                    { title: "Todo 1", checked: "checked" },
+                    { title: "Todo 2", checked: "" },
+                    { title: "Todo 3", checked: "" },
+                ],
+                themes: ["cyan", "amber", "blue"],
+                theme: "cyan",
+                publicChallenges: [],
+            });
+        </script>
+
+        <script src="lib/automerge.js" type="module"></script>
+        <!-- <script src="lib/pouchdb.js" type="module"></script> -->
+
+        <script src="app.js" type="module"></script>
+        <script src="lib/navigation.js"></script>
+        <!-- Components -->
+        <script src="lib/components/drawer.js"></script>
+        <script src="lib/components/modal.js"></script>
+    </body>
+</html>
