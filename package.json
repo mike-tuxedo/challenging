@@ -4,7 +4,8 @@
   "description": "Ein einfaches Node.js-Projekt mit server.js",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "echo 'Build abgeschlossen (kein Build-Schritt erforderlich)'"
   },
   "dependencies": {}
 }
