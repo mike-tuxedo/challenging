@@ -3,8 +3,7 @@ import http from 'http';
 import { WebSocketServer } from 'ws';
 import * as AR from '@automerge/automerge-repo';
 import { NodeWSServerAdapter } from '@automerge/automerge-repo-network-websocket';
-import { NodeLevelStorageAdapter } from '@automerge/automerge-repo-storage-level';
-import { Level } from 'level';
+import { NodeFSStorageAdapter } from "@automerge/automerge-repo-storage-nodefs";
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 8080;
 
@@ -16,8 +15,7 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, () => console.log('HTTP listening on', PORT));
 
 // Persistenz
-const level = new Level('./amr-data', { valueEncoding: 'view' });
-const storage = new NodeLevelStorageAdapter(level);
+const storage = new NodeFSStorageAdapter();
 
 // WebSocket auf Pfad /ws
 const wss = new WebSocketServer({ server, path: '/ws' });

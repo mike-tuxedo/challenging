@@ -8,7 +8,8 @@ await AR.initializeWasm(
 )
 
 const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
-const host = 'localhost:8080'; // oder window.location.host, wenn gleiche Domain
+// const host = 'localhost:8080'; // oder window.location.host, wenn gleiche Domain
+const host = location.host; // oder window.location.host, wenn gleiche Domain
 const path = '/ws';
 const wsUrl = `${proto}://${host}${path}`;
 
