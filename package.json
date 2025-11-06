@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "dein-projektname",
   "version": "1.0.0",
   "description": "Ein einfaches Node.js-Projekt mit server.js",
@@ -8,4 +9,12 @@
     "build": "echo 'Build abgeschlossen (kein Build-Schritt erforderlich)'"
   },
   "dependencies": {}
+=======
+  "name": "automerge-server",
+  "version": "0.1.0",
+  "dependencies": {
+    "@automerge/automerge-repo-network-websocket": "^2.4.0",
+    "@automerge/automerge-repo-storage-indexeddb": "^2.4.0"
+  }
+>>>>>>> 15fea6f (add package.json)
 }
