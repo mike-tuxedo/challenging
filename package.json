@@ -1,0 +1,10 @@
+{
+  "name": "dein-projektname",
+  "version": "1.0.0",
+  "description": "Ein einfaches Node.js-Projekt mit server.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {}
+}
