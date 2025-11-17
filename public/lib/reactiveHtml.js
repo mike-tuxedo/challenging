@@ -1,4 +1,16 @@
 class ReactiveStore {
+    // Regex patterns as constants
+    static VAR_PATTERN = /\{([^}]+)\}/g;
+    static ITEM_PROP_PATTERN = /\{item\.(\w+)\}/g;
+    static INDEX_PATTERN = /\{index\}/g;
+    static RS_FOR_PATTERN = /^(\w+)\s+in\s+([\w.]+)/;
+    static ARRAY_ACCESS_PATTERN = /^([^\[]+)\[([^\]]+)\]$/;
+    
+    // Constants
+    static MAX_ITERATIONS = 10;
+    static PLACEHOLDER_PREFIX = '__RS_ATTR_';
+    static PLACEHOLDER_SUFFIX = '__';
+    
     constructor(initialValues = {}) {
         // Store for reactive values
         this.store = {};
@@ -29,7 +41,6 @@ class ReactiveStore {
                 return v;
             },
             set(target, prop, value) {
-                console.log('set', prop, value);
                 // Track dependencies before updating the value
                 self.trackDependencies(prop, value);
 
@@ -488,20 +499,87 @@ class ReactiveStore {
         arr.forEach((item, idx) => {
             let node = el.querySelector(`[rs-for-index="${idx}"]`);
 
-            // Process the template with the current item data
-            let html = el._rs_for_inner
+            // Process attributes FIRST, before normal text replacement
+            // This ensures {item.property} in attributes gets proper quotes for strings
+            let html = el._rs_for_inner;
+            const placeholders = new Map();
+            let placeholderCounter = 0;
+            
+            // Function to format a value for JavaScript code in attributes
+            const formatJSValue = (value) => {
+                if (typeof value === 'string') {
+                    // Use single quotes (will be inside double-quoted attribute)
+                    return `'${value.replace(/'/g, "\\'")}'`;
+                } else if (typeof value === 'number' || typeof value === 'boolean') {
+                    return String(value);
+                } else if (value === null || value === undefined) {
+                    return 'null';
+                }
+                return String(value);
+            };
+            
+            // Step 1: Replace {item.property} in attributes with placeholders to protect them
+            html = html.replace(/(\w+)=("([^"]*)"|'([^']*)'|([^\s>="']+))/g, (match, attrName, fullMatch, doubleQuoted, singleQuoted, unquoted) => {
+                const attrValue = doubleQuoted || singleQuoted || unquoted || '';
+                
+                if (attrValue && attrValue.includes('{item.')) {
+                    // Create a unique placeholder for this attribute value
+                    const placeholder = `${ReactiveStore.PLACEHOLDER_PREFIX}${placeholderCounter++}${ReactiveStore.PLACEHOLDER_SUFFIX}`;
+                    
+                    // Replace {item.property} in the attribute value
+                    let processedValue = attrValue.replace(/'?\{item\.(\w+)\}'?/g, (placeholderMatch, prop) => {
+                        const value = item[prop];
+                        return formatJSValue(value);
+                    });
+                    
+                    // Store the processed value
+                    placeholders.set(placeholder, {
+                        attrName: attrName,
+                        value: processedValue,
+                        wasDoubleQuoted: !!doubleQuoted,
+                        wasSingleQuoted: !!singleQuoted
+                    });
+                    
+                    // Return the attribute with placeholder
+                    if (doubleQuoted) {
+                        return `${attrName}="${placeholder}"`;
+                    } else if (singleQuoted) {
+                        return `${attrName}='${placeholder}'`;
+                    } else {
+                        return `${attrName}=${placeholder}`;
+                    }
+                }
+                
+                return match;
+            });
+            
+            // Step 2: Process text content (this won't affect our placeholders)
+            html = html
                 .replace(/\{item\.(\w+)\}/g, (m, p1) => item[p1] || '')
                 .replace(/\{index\}/g, idx)
                 .replace(/\{item\.index\}/g, idx)
-                .replace(/\{item\}/g, typeof item === 'object' ? (item.title || '') : item); // Handle {item} for both objects and primitives
+                .replace(/\{item\}/g, typeof item === 'object' ? (item.title || '') : item);
 
-            // Process any other variables in the template
+            // Step 3: Process any other variables
             html = html.replace(/\{([^}]+)\}/g, (m, v) => {
-                // Skip if it was already processed as item.property
                 if (v.startsWith('item.') || v === 'index' || v === 'item.index' || v === 'item') {
-                    return m; // Return the original match to avoid double processing
+                    return m;
                 }
                 return this.resolveValue(v);
+            });
+            
+            // Step 4: Restore the processed attribute values
+            // Replace placeholders in the correct order (reverse to avoid conflicts)
+            const sortedPlaceholders = Array.from(placeholders.entries()).reverse();
+            sortedPlaceholders.forEach(([placeholder, data]) => {
+                // Replace the placeholder with the processed value, maintaining quotes
+                if (data.wasDoubleQuoted) {
+                    html = html.replace(new RegExp(`"${placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"`, 'g'), `"${data.value}"`);
+                } else if (data.wasSingleQuoted) {
+                    html = html.replace(new RegExp(`'${placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}'`, 'g'), `'${data.value}'`);
+                } else {
+                    html = html.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), data.value);
+                }
             });
 
             if (node) {
@@ -585,7 +663,7 @@ class ReactiveStore {
         let processedHtml = htmlContent;
         let hasPlaceholders = true;
         let iterations = 0;
-        const maxIterations = 10;
+        const maxIterations = ReactiveStore.MAX_ITERATIONS;
 
         do {
             hasPlaceholders = false;
@@ -902,15 +980,21 @@ class ReactiveStore {
         }
 
         // Also check all rs-if expressions that might contain this variable
-        const ifNodes = document.querySelectorAll('[rs-if]');
-        ifNodes.forEach(node => {
-            const expr = node.getAttribute('rs-if');
-            // Use regex to match whole words only to avoid partial matches
-            const varRegex = new RegExp(`\\b${varName}\\b`);
-            if (varRegex.test(expr)) {
-                allReferences.push({ node, attribute: 'rs-if' });
-            }
-        });
+        // Performance: Only query if we have references (most cases)
+        // Note: This is still needed for dynamically added elements
+        if (this.references.has(varName) || varName.includes('.')) {
+            const ifNodes = document.querySelectorAll('[rs-if]');
+            ifNodes.forEach(node => {
+                const expr = node.getAttribute('rs-if');
+                if (expr) {
+                    // Use regex to match whole words only to avoid partial matches
+                    const varRegex = new RegExp(`\\b${varName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`);
+                    if (varRegex.test(expr)) {
+                        allReferences.push({ node, attribute: 'rs-if' });
+                    }
+                }
+            });
+        }
 
         // Process all collected references
         allReferences.forEach(({ node, attribute }) => {
@@ -934,15 +1018,6 @@ class ReactiveStore {
                 this.updateNodeAttribute(node, attribute, varName, value);
             }
         });
-
-        // Also update any variables that depend on this one
-        if (this.dependencies.has(varName)) {
-            this.dependencies.get(varName).forEach(dependentVar => {
-                if (this.store[dependentVar] !== undefined && !processed.has(dependentVar)) {
-                    this.updateVariable(dependentVar, this.store[dependentVar], new Set(processed));
-                }
-            });
-        }
 
         // Also update any variables that depend on this one
         if (this.dependencies.has(varName)) {
@@ -1024,7 +1099,7 @@ class ReactiveStore {
     
         let hasPlaceholders = true;
         let iterations = 0;
-        const maxIterations = 10;
+        const maxIterations = ReactiveStore.MAX_ITERATIONS;
     
         do {
             hasPlaceholders = false;

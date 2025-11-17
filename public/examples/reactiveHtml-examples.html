@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>reactiveHtml - Beispiele</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        h1 { color: #333; }
+        h2 { color: #666; margin-top: 0; }
+        h3 { color: #888; }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+        }
+        button:hover {
+            background: #f0f0f0;
+        }
+        .show { display: block; }
+        .hide { display: none; }
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        .example-code {
+            background: #f4f4f4;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        .todo-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: white;
+            border-left: 3px solid #4CAF50;
+        }
+        .todo-item.completed {
+            opacity: 0.6;
+            border-left-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <h1>reactiveHtml - Minimal Beispiele</h1>
+    
+    <section>
+        <h2>1. Basis-Variablen</h2>
+        <p>Einfache Variablen: <strong>{name}</strong>, <strong>{age}</strong> Jahre alt</p>
+        <p>Theme: <strong>{theme}</strong></p>
+        <button onclick="rs.name = 'Max Mustermann'">Name ändern</button>
+        <button onclick="rs.age++">Alter erhöhen</button>
+        <button onclick="rs.theme = rs.theme === 'dark' ? 'light' : 'dark'">Theme wechseln</button>
+        
+        <div class="example-code">
+&lt;p&gt;Name: {name}, Alter: {age}&lt;/p&gt;
+&lt;button onclick="rs.name = 'Max Mustermann'"&gt;Name ändern&lt;/button&gt;
+        </div>
+    </section>
+
+    <section>
+        <h2>2. rs-if Direktive (Conditional Rendering)</h2>
+        <div rs-if="isVisible === true">
+            <p>✅ Dieser Text ist sichtbar, weil isVisible = true</p>
+        </div>
+        <div rs-if="isVisible === false">
+            <p>❌ Dieser Text ist versteckt, weil isVisible = false</p>
+        </div>
+        <div rs-if="age >= 18">
+            <p>✅ Du bist volljährig (Alter: {age})</p>
+        </div>
+        <div rs-if="age < 18">
+            <p>❌ Du bist noch nicht volljährig (Alter: {age})</p>
+        </div>
+        <button onclick="rs.isVisible = !rs.isVisible">Sichtbarkeit umschalten</button>
+        
+        <div class="example-code">
+&lt;div rs-if="isVisible === true"&gt;
+    Dieser Text ist sichtbar
+&lt;/div&gt;
+&lt;div rs-if="age >= 18"&gt;
+    Du bist volljährig
+&lt;/div&gt;
+        </div>
+    </section>
+
+    <section>
+        <h2>3. rs-for Direktive (Listen)</h2>
+        <h3>Todos:</h3>
+        <div rs-for="todo in todos">
+            <div class="todo-item">
+                <span>{index} {todo.title} </span>
+                <button onclick="toggleTodo({index})">Toggle</button>
+                <button onclick="deleteTodo({index})">Löschen</button>
+            </div>
+        </div>
+        <input type="text" id="newTodo" placeholder="Neues Todo...">
+        <button onclick="addTodo()">Todo hinzufügen</button>
+        
+        <div class="example-code">
+&lt;div rs-for="todo in todos"&gt;
+    &lt;div&gt;{index + 1}. {todo.title}&lt;/div&gt;
+    &lt;button onclick="deleteTodo({index})"&gt;Löschen&lt;/button&gt;
+&lt;/div&gt;
+        </div>
+    </section>
+
+    <section>
+        <h2>4. Item Properties in Attributen</h2>
+        <p>Strings werden automatisch in Anführungszeichen gesetzt:</p>
+        <div rs-for="item in items">
+            <button onclick="showItem({item.id})">Item {item.name} (ID: {item.id})</button>
+        </div>
+        
+        <div class="example-code">
+&lt;button onclick="showItem({item.id})"&gt;Item {item.name}&lt;/button&gt;
+&lt;!-- Wird zu: onclick="showItem('abc123')" --&gt;
+        </div>
+    </section>
+
+    <section>
+        <h2>5. rs-html Direktive (Dynamic HTML)</h2>
+        <div rs-html="htmlContent"></div>
+        <button onclick="rs.htmlContent = '<p>Neuer <strong>HTML</strong> Inhalt!</p>'">HTML ändern</button>
+        
+        <div class="example-code">
+&lt;div rs-html="htmlContent"&gt;&lt;/div&gt;
+&lt;!-- htmlContent kann HTML mit Variablen enthalten --&gt;
+        </div>
+    </section>
+
+    <section>
+        <h2>6. Verschachtelte Objekte</h2>
+        <p>User: {user.name} ({user.email})</p>
+        <p>Adresse: {user.address.street}, {user.address.city}</p>
+        <button onclick="rs.user.name = 'Neuer Name'">Name ändern</button>
+        <button onclick="rs.user.address.city = 'Berlin'">Stadt ändern</button>
+        
+        <div class="example-code">
+&lt;p&gt;{user.name} - {user.address.city}&lt;/p&gt;
+        </div>
+    </section>
+
+    <section>
+        <h2>7. Array-Zugriff mit Variablen</h2>
+        <p>Aktuelle Seite: {pageTitle[activePage]}</p>
+        <button onclick="rs.activePage = (rs.activePage + 1) % rs.pageTitle.length">Nächste Seite</button>
+        
+        <div class="example-code">
+&lt;p&gt;{pageTitle[activePage]}&lt;/p&gt;
+        </div>
+    </section>
+
+    <section>
+        <h2>8. rs-* Attribute (Conditional Attributes)</h2>
+        <input type="checkbox" rs-checked="isChecked === true">
+        <label>Checkbox ist {isChecked ? 'aktiviert' : 'deaktiviert'}</label>
+        <br><br>
+        <button rs-disabled="isDisabled === true">Disabled Button</button>
+        <button onclick="rs.isChecked = !rs.isChecked">Toggle Checkbox</button>
+        <button onclick="rs.isDisabled = !rs.isDisabled">Toggle Disabled</button>
+        
+        <div class="example-code">
+&lt;input type="checkbox" rs-checked="isChecked === true"&gt;
+&lt;button rs-disabled="isDisabled === true"&gt;Button&lt;/button&gt;
+&lt;!-- rs-checked und rs-disabled werden zu checked/disabled Attributen --&gt;
+        </div>
+    </section>
+
+    <!-- Scripts -->
+    <script src="../lib/reactiveHtml.js"></script>
+    <script>
+        // ReactiveStore initialisieren
+        const { store, rs } = new ReactiveStore({
+            // Basis-Variablen
+            name: 'Max Mustermann',
+            age: 25,
+            theme: 'light',
+            isVisible: true,
+            isChecked: false,
+            isDisabled: false,
+            activePage: 0,
+            
+            // Arrays
+            todos: [
+                { title: 'Einkaufen gehen', completed: false },
+                { title: 'Code schreiben', completed: true },
+                { title: 'Dokumentation lesen', completed: false }
+            ],
+            items: [
+                { id: 'item1', name: 'Item 1' },
+                { id: 'item2', name: 'Item 2' },
+                { id: 'item3', name: 'Item 3' }
+            ],
+            pageTitle: ['Startseite', 'Über uns', 'Kontakt', 'Impressum'],
+            
+            // Verschachtelte Objekte
+            user: {
+                name: 'John Doe',
+                email: 'john@example.com',
+                address: {
+                    street: 'Musterstraße 123',
+                    city: 'München',
+                    zip: '80331'
+                }
+            },
+            
+            // HTML Content
+            htmlContent: '<p>Initialer <strong>HTML</strong> Inhalt mit Variablen: {name}</p>'
+        });
+
+        // Helper-Funktionen
+        function addTodo() {
+            const input = document.getElementById('newTodo');
+            if (input.value.trim()) {
+                rs.todos.push({
+                    title: input.value.trim(),
+                    completed: false
+                });
+                input.value = '';
+            }
+        }
+
+        function toggleTodo(index) {
+            if (rs.todos[index]) {
+                rs.todos[index].completed = !rs.todos[index].completed;
+            }
+        }
+
+        function deleteTodo(index) {
+            rs.todos.splice(index, 1);
+        }
+
+        function showItem(id) {
+            alert('Item ID: ' + id);
+        }
+
+        // ReactiveHtml ist sofort nach Initialisierung bereit
+        console.log('ReactiveHtml ist bereit!', rs);
+    </script>
+</body>
+</html>
+

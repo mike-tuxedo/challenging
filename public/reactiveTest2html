@@ -1,0 +1,122 @@
+<html lang="de">
+
+<head>
+    <title>Beispiel mit Petite-Vue</title>
+    <script src="https://unpkg.com/petite-vue" defer init></script>
+</head>
+
+<body v-scope="store()">
+    <article>
+        <h3>Statisches Beispiel</h3>
+        <p :theme="theme.color" :class="theme.color">Ein Text <strong>{{ text }}</strong> und die Theme-Farbe ist
+            <strong>{{ theme.color }}</strong>
+        </p>
+        <form>
+            <select v-model="theme.color">
+                <option value="theme-red">Rot</option>
+                <option value="theme-blue">Blau</option>
+            </select>
+            <label for="red">
+                <input type="radio" id="red" name="theme" :checked="theme.color === 'theme-red'"
+                    @change="setTheme('red')" /> Red
+            </label>
+            <label for="blue">
+                <input type="radio" id="blue" name="theme" :checked="theme.color === 'theme-blue'"
+                    @change="setTheme('blue')" /> Blue
+            </label>
+        </form>
+        <button @click="clicked()">Klick mich</button>
+    </article>
+
+    <article>
+        <h3>Dynamisches Beispiel</h3>
+        <button @click="addTodo()">Add Todo</button>
+        <ul>
+            <li v-for="todo in todos" :key="todo.id" :theme="theme.color" :class="todo.checked ? 'checked' : ''">
+                <input type="checkbox" v-model="todo.checked">
+                <input type="text" v-model="todo.title">
+                <span>{{ todo.title }} | Erledigt: {{ todo.checked }}</span>
+            </li>
+        </ul>
+    </article>
+
+    <script>
+        let nextId = 4;
+
+        function store() {
+            return {
+                text: 'Lorem Ipsum',
+                theme: {
+                    color: 'theme-red'
+                },
+                todos: [
+                    { id: 0, title: "Todo 1", checked: true },
+                    { id: 1, title: "Todo 2", checked: false },
+                    { id: 2, title: "Todo 3", checked: false },
+                ],
+
+                clicked() {
+                    alert('Geklickt!');
+                },
+
+                addTodo() {
+                    this.todos.push({ id: nextId++, title: 'Neues Todo', checked: false });
+                },
+
+                setTheme(value) {
+                    this.theme.color = `theme-${value}`;
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Deine Styles bleiben unverändert */
+        body {
+            font-family: sans-serif;
+        }
+
+        article {
+            border: 1px solid #ccc;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+        }
+
+        [theme="theme-red"] {
+            background: red;
+            color: white;
+        }
+
+        [theme="theme-blue"] {
+            background: blue;
+            color: white;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 3px;
+
+            &.checked {
+                background: yellowgreen;
+            }
+        }
+
+        p {
+            padding: 5px;
+            border-radius: 3px;
+        }
+    </style>
+
+</body>
+
+</html>

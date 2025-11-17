@@ -38,7 +38,7 @@
 const challengeTemplate = {
     "id": "",
     "type": "",
-    "title": "",
+    "title": "Challenge Titel",
     "description": "",
     "weeks": 0,
     "days_per_week": 0,

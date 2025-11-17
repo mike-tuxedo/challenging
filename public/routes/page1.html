@@ -4,14 +4,32 @@
 </hgroup>
 
 <article>
-    <input type="text" placeholder="pouchdb test" id="pouchdbtest">
-    <button id="pouchdbdelete">delete</button>
-    <button id="pouchdbcreate">create</button>
+    <button onclick="createChallenge()">create</button>
+    <button onclick="saveChallenge()">save</button>
+<br>
+<br>
+    <div class="challenges" @for="ch in publicChallenges">
+        <section @click="editChallenge(ch)">
+            {ch.title} | Weeks: {ch.weeksAmount}
+        </section>
+    </div>
 </article>
 
-<div rs-for="item in publicChallenges">
-    <article>{index} {item.title} <button onclick="deleteChallenge({index})">delete</button></article>
-</div>
+<article>
+    <form>
+        <select @bind="editingChallenge.type">
+            <option value="onetime">Onetime</option>
+            <option value="easy">Easy</option>
+            <option value="complex">Complex</option>
+        </select>
+        <input type="text" @bind="editingChallenge.title" placeholder="title">
+        <input type="number" @bind="editingChallenge.weeksAmount" placeholder="weeksAmount">
+        <input type="number" @bind="editingChallenge.days_per_week" placeholder="days per week">
+        <input type="checkbox" @bind="editingChallenge.published" placeholder="published">
+        <input type="text" @bind="editingChallenge.creator" placeholder="creator">
+    </form>
+    <button @click="saveChallenge()"></button>
+</article>
 
 <article>
     <h3>What's the goal?</h3>
@@ -21,5 +39,5 @@
 </article>
 
 <article>
-    <button class="outline" onclick="$id('settings').open()">Settings</button>
+    <button class="outline" onclick="$id('myDrawer').open()">Settings</button>
 </article>

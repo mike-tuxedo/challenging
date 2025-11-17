@@ -40,7 +40,7 @@ html {
                 display: block;
             }
 
-            &.show {
+            &.active {
                 pointer-events: initial;
                 opacity: 1;
                 transform: translateY(0px) scale(1);
@@ -92,10 +92,7 @@ html {
                     transition: transform 0.2s ease-in-out;
                 }
 
-                &:first-child.active-1,
-                &:nth-child(2).active-2,
-                &:nth-child(3).active-3,
-                &:nth-child(4).active-4 {
+                &.active {
                     color: var(--custom-footer-color-active) !important;
                     border-top: 3px solid var(--custom-footer-border-active) !important;
                     

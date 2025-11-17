@@ -1,3 +1,5 @@
+console.log('navigation.js LOADED')
+
 function showPage(page) {
     rs.activePage = page;
 }
@@ -11,7 +13,6 @@ async function getPagesContent(idx) {
     const pageContent = await pageResponse.text(); // Hier ist die Korrektur!
     $id(`page${idx}`).innerHTML = pageContent;
     // Manuall added nodes need to be re-parsed manually
-    store.reparse($id(`page${idx}`));
 }
 
 async function loadPages() {
@@ -19,5 +20,6 @@ async function loadPages() {
     await getPagesContent(2);
     await getPagesContent(3);
     window.dispatchEvent(new CustomEvent('pagesReady'));
+    store.reparse();
 }
 loadPages();

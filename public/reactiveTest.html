@@ -1,0 +1,19 @@
+<html lang="de" data-theme="dark" data-color="cyan">
+
+<head>
+    <script src="lib/utils.js"></script>
+    <script src="lib/helium.js"></script>
+</head>
+
+<body>
+    <ul @for="item in items">
+        <li @text="item.name"></li>
+    </ul>
+      
+      <script>
+        const state = helium();
+        console.log(state);
+        state.items = [{name: 'A'}, {name: 'B'}];
+      </script>
+</body>
+</html>

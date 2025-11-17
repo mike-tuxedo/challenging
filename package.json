@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Ein einfaches Node.js-Projekt mit server.js",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "start": "node server.js",
     "build": "echo 'Build abgeschlossen (kein Build-Schritt erforderlich)'"
@@ -10,6 +11,7 @@
   "dependencies": {
     "@automerge/automerge-repo-network-websocket": "^2.4.0",
     "@automerge/automerge-repo-storage-indexeddb": "^2.4.0",
-    "@automerge/automerge-repo-storage-nodefs": "^2.4.0"
+    "@automerge/automerge-repo-storage-nodefs": "^2.4.0",
+    "pouchdb-server": "^4.2.0"
   }
 }

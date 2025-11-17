@@ -27,15 +27,18 @@
   </hgroup>
   <p>Here we have variables as well as rs-if and rs-for directives, which get reactive rendered, if the variable changes.</p>
 
-  <h4>Checked Todos</h4>
-  <ul class="items" rs-for="item in todos">
-      <li class="item">
-          <label for="todo-{index}">
-              <input id="todo-{index}" name="todo-{index}" {item.checked} type="checkbox" onchange="toggleTodo({index})"> {item.title}
-          </label>
-      </li>
+  <h4>Checked Todos - Test</h4>
+  <ul class="todos" @for="todo in todos">
+    <li>
+      <label>
+        <input type="checkbox" @bind="todo.checked"> {todo.title}
+      </label>
+      <input type="text" @bind="todo.title">
+    </li>
   </ul>
-  <ul><li rs-if="todos[0].checked == 'checked'">1 {todos[0].checked}</li> <li rs-if="todos[1].checked == 'checked'">2 {todos[1].checked}</li> <li rs-if="todos[2].checked == 'checked'">3 {todos[2].checked}</li></ul>
+  <ul class="todos" @for="todo in todos">
+    <li @class="todo.checked ? 'active' : ''">{todo.title}  {todo.checked}</li>
+  </ul>
 
 
   <h4>Active theme {theme}</h4>

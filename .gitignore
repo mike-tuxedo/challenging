@@ -1,2 +1,6 @@
 node_modules
 automerge-repo-data/
+_replicator
+_users
+log.txt
+pouch__all_dbs__
